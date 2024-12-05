@@ -1,0 +1,11 @@
+@Endpoint = http://localhost:5093
+
+POST {{Endpoint}}/orders
+Accept: application/json
+Content-Type: application/json
+
+{
+   "customerId": "james"
+}
+
+###

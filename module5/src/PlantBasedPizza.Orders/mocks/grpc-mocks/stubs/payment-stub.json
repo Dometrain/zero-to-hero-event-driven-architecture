@@ -1,0 +1,15 @@
+{
+    "service": "Payment",
+    "method": "TakePayment",
+    "input": {
+      "matches": {
+        "orderIdentifier": ".*"
+      }
+    },
+    "output": {
+      "data": {
+        "paymentStatus": "SUCCESS",
+        "isSuccess": true
+      }
+    }
+  }

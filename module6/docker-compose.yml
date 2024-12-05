@@ -1,0 +1,84 @@
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    environment:
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - 27017:27017
+    networks:
+      - dapr
+
+  jaeger:
+    image: jaegertracing/opentelemetry-all-in-one:latest
+    ports:
+      - 16686:16686
+      - 13133:13133
+      - 4317:4317
+      - 4318:4318
+    networks:
+      - dapr
+
+  cache:
+    image: redis:7.2
+    expose:
+      - "6379"
+    networks:
+      - dapr
+
+  postgresql:
+    container_name: temporal-postgresql
+    environment:
+      POSTGRES_PASSWORD: temporal
+      POSTGRES_USER: temporal
+    image: postgres:latest
+    networks:
+      - dapr
+    ports:
+      - 5432:5432
+    volumes:
+      - /var/lib/postgresql/data
+
+  temporal:
+    container_name: temporal
+    depends_on:
+      - postgresql
+    environment:
+      - DB=postgres12
+      - DB_PORT=5432
+      - POSTGRES_USER=temporal
+      - POSTGRES_PWD=temporal
+      - POSTGRES_SEEDS=postgresql
+    image: temporalio/auto-setup:1.25.2
+    networks:
+      - dapr
+    ports:
+      - 7233:7233
+
+  temporal-ui:
+    container_name: temporal-ui
+    depends_on:
+      - temporal
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CORS_ORIGINS=http://localhost:3000
+    image: temporalio/ui:2.23.0
+    networks:
+      - dapr
+    ports:
+      - 8090:8080
+
+  ############################
+  # Dapr placement service
+  ############################
+  placement:
+    image: "daprio/dapr"
+    command: ["./placement", "-port", "50006"]
+    ports:
+      - "50006:50006"
+    networks:
+      - dapr
+
+networks:
+  dapr: null
