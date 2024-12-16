@@ -97,31 +97,39 @@ function Home() {
   }
 
   async function addToOrder(item) {
-    let orderNumber = order.orderNumber;
+    try {
+      let orderNumber = order.orderNumber;
 
-    if (orderNumber === undefined) {
-      let startOrder = await ordersApi.post("/pickup", {
-        customerIdentifier: "",
-      });
-      orderNumber = startOrder.data.orderNumber;
+      if (orderNumber === undefined) {
+        let startOrder = await ordersApi.post("/pickup", {
+          customerIdentifier: "",
+        });
+        orderNumber = startOrder.data.orderNumber;
+      }
+
+      let addItemBody = {
+        OrderIdentifier: orderNumber,
+        RecipeIdentifier: item.recipeIdentifier.toString(),
+        Quantity: 1,
+      };
+      // Make request to add item to order
+      let addItemResponse = await ordersApi.post(
+        `/${orderNumber}/items`,
+        addItemBody
+      );
+
+      setSnackbarContents(
+        `${item.recipeIdentifier.toString()} added to order!`
+      );
+      setSnackbarOpen(true);
+
+      setOrder(addItemResponse.data);
+    } catch (error) {
+      if (error.response.status === 401) {
+        setSnackbarContents(`Please login before creating an order`);
+        setSnackbarOpen(true);
+      }
     }
-
-    let addItemBody = {
-      OrderIdentifier: orderNumber,
-      RecipeIdentifier: item.recipeIdentifier.toString(),
-      Quantity: 1,
-    };
-
-    // Make request to add item to order
-    let addItemResponse = await ordersApi.post(
-      `/${orderNumber}/items`,
-      addItemBody
-    );
-
-    setSnackbarContents(`${item.recipeIdentifier.toString()} added to order!`);
-    setSnackbarOpen(true);
-
-    setOrder(addItemResponse.data);
   }
 
   async function submitOrder() {
