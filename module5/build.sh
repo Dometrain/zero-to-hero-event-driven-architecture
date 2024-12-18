@@ -10,4 +10,6 @@ cd src/PlantBasedPizza.Orders && docker build -f application/PlantBasedPizza.Ord
 cd ../../
 cd src/PlantBasedPizza.Payments && docker build -f application/PlantBasedPizza.Payments/Dockerfile-x86 -t payment-api ../
 cd ../../
-cd src/PlantBasedPizza.Recipes && docker build -f applications/PlantBasedPizza.Recipes.Api/Dockerfile-x86 -t recipe-api ../
+cd src/PlantBasedPizza.Recipes && docker build -f applications/PlantBasedPizza.Recipes.Api/Dockerfile-x86 -t recipe-api ../\
+cd ../../
+cd src/frontend && docker build -t frontend .

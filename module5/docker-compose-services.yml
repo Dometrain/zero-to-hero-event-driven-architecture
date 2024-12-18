@@ -534,6 +534,13 @@ services:
       - "local.loyalty-api"
       - "local.account-api"
 
+  frontend:
+    image: frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - dapr
+
   integration-test-dapr:
     image: "daprio/daprd:edge"
     command: [
