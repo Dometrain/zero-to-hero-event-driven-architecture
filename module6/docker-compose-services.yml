@@ -518,6 +518,13 @@ services:
 
     network_mode: "service:local.account-api"
 
+  frontend:
+    image: frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - dapr
+
   reverse-proxy:
     image: nginx:latest
     ports:
