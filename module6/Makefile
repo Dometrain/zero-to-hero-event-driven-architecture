@@ -1,11 +1,4 @@
-orders-deps:
-	cd src/PlantBasedPizza.Orders;docker compose up -d
-
-orders-deps-down:
-	cd src/PlantBasedPizza.Orders;docker compose down
-
-dapr-orders:
-	dapr run --app-id orders --app-port 8080 --components-path ./components -- dotnet run -p src/PlantBasedPizza.Orders/application/PlantBasedPizza.Orders.Api --urls http://localhost:8080
+build: build-account build-delivery build-kitchen build-loyalty-points build-orders build-payments build-recipes
 
 build-account:
 	cd src/PlantBasedPizza.Account;make build
@@ -22,7 +15,7 @@ build-payments:
 build-recipes:
 	cd src/PlantBasedPizza.Recipes;make build
 
-build: build-account build-delivery build-kitchen build-loyalty-points build-orders build-payments build-recipes
+build-arm: build-account-arm build-delivery-arm build-kitchen-arm build-loyalty-points-arm build-orders-arm build-payments-arm build-recipes-arm
 
 build-account-arm:
 	cd src/PlantBasedPizza.Account;make build-arm
@@ -39,30 +32,9 @@ build-payments-arm:
 build-recipes-arm:
 	cd src/PlantBasedPizza.Recipes;make build-arm
 
-build-arm: build-account-arm build-delivery-arm build-kitchen-arm build-loyalty-points-arm build-orders-arm build-payments-arm build-recipes-arm
-
-redeploy-all: deploy-account deploy-delivery deploy-kitchen deploy-loyalty deploy-orders deploy-payments deploy-recipes
-	
-deploy-account:
-	cd infra/account;terraform init;terraform apply --var-file dev.tfvars -auto-approve
-	
-deploy-delivery:
-	cd infra/delivery;terraform init;terraform apply --var-file dev.tfvars -auto-approve
-
-deploy-kitchen:
-	cd infra/kitchen;terraform init;terraform apply --var-file dev.tfvars -auto-approve
-
-deploy-loyalty:
-	cd infra/loyalty;terraform init;terraform apply --var-file dev.tfvars -auto-approve
-
-deploy-orders:
-	cd infra/orders;terraform init;terraform apply --var-file dev.tfvars -auto-approve
-
-deploy-payments:
-	cd infra/payments;terraform init;terraform apply --var-file dev.tfvars -auto-approve
-
-deploy-recipes:
-	cd infra/recipes;terraform init;terraform apply --var-file dev.tfvars -auto-approve
+run-local:
+	docker compose up -d; sleep 10; docker compose -f docker-compose-services.yml up -d
+	cd src/frontend;npm i;npm run start
 
 start-frontend:
 	cd src/frontend;npm i;npm run start
